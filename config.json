@@ -100,14 +100,9 @@
       }, 
       "streamSettings": {
         "network": "ws", 
-        "security": "none", 
-        "tlsSettings": {
-          "certificates": [
-            {
-              "certificateFile": "/root/fullchain.crt", 
-              "keyFile": "/root/privkey.key"
-            }
-          ]
+        "security": "none",
+        "wsSettings":{
+          "path": "/php"
         }
       }
     }, 
@@ -122,13 +117,7 @@
             "flow": "xtls-rprx-direct"
           }
         ], 
-        "decryption": "none", 
-        "fallbacks": [
-          {
-            "dest": 8080, 
-            "xver": 1
-          }
-        ]
+        "decryption": "none"
       }, 
       "streamSettings": {
         "network": "tcp", 
@@ -139,8 +128,8 @@
           ], 
           "certificates": [
             {
-              "certificateFile": "/root/fullchain.crt", 
-              "keyFile": "/root/privkey.key"
+              "certificateFile": "/usr/local/etc/xray/fullchain.crt", 
+              "keyFile": "/usr/local/etc/xray/privkey.key"
             }
           ]
         }
@@ -155,12 +144,12 @@
     }, 
     {
       "port": 8080, 
-      "listen": "127.0.0.1", 
-      "protocol": "vless", 
+      "protocol": "vmess", 
       "settings": {
         "clients": [
           {
-            "id": "115b399e-9c7d-406e-adf9-172c965a3c54"
+            "id": "115b399e-9c7d-406e-adf9-172c965a3c54",
+            "alterId": 0
           }
         ], 
         "decryption": "none"
@@ -169,7 +158,7 @@
         "network": "ws", 
         "security": "none", 
         "wsSettings": {
-          "acceptProxyProtocol": false
+          "path": "/php"
         }
       }
     }
@@ -177,6 +166,9 @@
   "outbounds": [
     {
       "protocol": "freedom", 
+      "settings": {
+        "domainStrategy": "UseIPv4"
+      }, 
       "tag": "Proxy"
     },
     {
