@@ -1,0 +1,221 @@
+{
+  "log": {
+    "loglevel": "warning"
+  }, 
+  "dns": {
+    "hosts": {
+      "domain:googleapis.cn": "googleapis.com"
+    }, 
+    "servers": [
+      {
+        "address": "https+local://dns.google/dns-query"
+      }
+    ]
+  }, 
+  "routing": {
+    "domainStrategy": "IPIfNonMatch", 
+    "rules": [
+      {
+        "type": "field", 
+        "outboundTag": "Proxy", 
+        "domain": [
+          "edge.activity.windows.com",
+          "www.gstatic.com"
+        ]
+      },
+      {
+        "type": "field", 
+        "outboundTag": "Proxy", 
+        "ip": [
+          "1.1.1.1/32", 
+          "1.0.0.1/32", 
+          "8.8.8.8/32", 
+          "8.8.4.4/32", 
+          "geoip:us", 
+          "geoip:ca", 
+          "geoip:telegram"
+        ]
+      },
+      {
+        "type": "field", 
+        "outboundTag": "Reject", 
+        "domain": [
+          "geosite:category-ads-all",
+          "geosite:win-spy",
+          "domain:netflav.com",
+          "domain:jable.tv",
+          "domain:f1s.app"
+        ]
+      },
+      {
+        "type": "field",
+        "outboundTag": "BacktoChina",
+        "ip": [
+          "223.5.5.5/32",
+          "119.29.29.29/32",
+          "180.76.76.76/32",
+          "114.114.114.114/32",
+          "geoip:cn",
+          "geoip:private"
+        ]
+      },
+      {
+        "type": "field",
+        "outboundTag": "BacktoChina",
+        "domain": [
+          "geosite:private",
+          "geosite:apple-cn",
+          "geosite:google-cn",
+          "geosite:tld-cn"
+        ]
+      },
+      {
+        "type": "field",
+        "outboundTag": "Proxy",
+        "domain": [
+          "geosite:geolocation-!cn"
+        ]
+      },
+      {
+        "type": "field",
+        "outboundTag": "BacktoChina",
+        "domain": [
+          "geosite:cn"
+        ]
+      }
+    ]
+  }, 
+  "inbounds": [
+    {
+      "port": 80,
+      "tag": "ws", 
+      "protocol": "vless", 
+      "settings": {
+        "decryption": "none", 
+        "clients": [
+          {
+            "id": "115b399e-9c7d-406e-adf9-172c965a3c54"
+          }
+        ]
+      }, 
+      "streamSettings": {
+        "network": "ws", 
+        "security": "none", 
+        "tlsSettings": {
+          "certificates": [
+            {
+              "certificateFile": "/root/fullchain.crt", 
+              "keyFile": "/root/privkey.key"
+            }
+          ]
+        }
+      }
+    }, 
+    {
+      "port": 443,
+      "tag": "xtls",
+      "protocol": "vless", 
+      "settings": {
+        "clients": [
+          {
+            "id": "115b399e-9c7d-406e-adf9-172c965a3c54", 
+            "flow": "xtls-rprx-direct"
+          }
+        ], 
+        "decryption": "none", 
+        "fallbacks": [
+          {
+            "dest": 8080, 
+            "xver": 1
+          }
+        ]
+      }, 
+      "streamSettings": {
+        "network": "tcp", 
+        "security": "xtls", 
+        "xtlsSettings": {
+          "alpn": [
+            "http/1.1"
+          ], 
+          "certificates": [
+            {
+              "certificateFile": "/root/fullchain.crt", 
+              "keyFile": "/root/privkey.key"
+            }
+          ]
+        }
+      }, 
+      "sniffing": {
+        "enabled": true, 
+        "destOverride": [
+          "http", 
+          "tls"
+        ]
+      }
+    }, 
+    {
+      "port": 8080, 
+      "listen": "127.0.0.1", 
+      "protocol": "vless", 
+      "settings": {
+        "clients": [
+          {
+            "id": "115b399e-9c7d-406e-adf9-172c965a3c54"
+          }
+        ], 
+        "decryption": "none"
+      }, 
+      "streamSettings": {
+        "network": "ws", 
+        "security": "none", 
+        "wsSettings": {
+          "acceptProxyProtocol": false
+        }
+      }
+    }
+  ], 
+  "outbounds": [
+    {
+      "protocol": "freedom", 
+      "settings": {
+        "domainStrategy": "UseIPv4"
+      }, 
+      "tag": "Proxy"
+    },
+    {
+      "protocol": "vless", 
+      "settings": {
+        "vnext": [
+          {
+            "address": "gdfs.ddns.cdntip.top", 
+            "port": 11106, 
+            "users": [
+              {
+                "encryption": "none", 
+                "flow": "xtls-rprx-direct", 
+                "id": "115b399e-9c7d-406e-adf9-172c965a3c54"
+              }
+            ]
+          }
+        ]
+      }, 
+      "streamSettings": {
+        "network": "tcp", 
+        "security": "xtls", 
+        "xtlsSettings": {
+          "allowInsecure": true
+        }
+      }, 
+      "tag": "BacktoChina"
+    }, 
+    {
+      "protocol": "blackhole", 
+      "settings": {
+        "response": {
+          "type": "http"
+        }
+      }, 
+      "tag": "Reject"
+    }
+  ]
+}
