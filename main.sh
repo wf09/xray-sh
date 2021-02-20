@@ -23,7 +23,7 @@ install_bin(){
     unzip -d /tmp/Xray Xray.zip
     chmod +x /tmp/Xray/xray
     mv /tmp/Xray/xray /usr/local/bin/xray
-    mkdir /usr/local/etc/xray
+    mkdir -p /usr/local/etc/xray
     rm -rf Xray.zip /tmp/Xray
 
     mv fullchain.crt privkey.key /usr/local/etc/xray
@@ -195,21 +195,20 @@ install_config(){
     }, 
     {
       "port": 8080, 
-      "listen": "127.0.0.1", 
-      "protocol": "vless", 
+      "protocol": "vmess", 
       "settings": {
         "clients": [
           {
-            "id": "115b399e-9c7d-406e-adf9-172c965a3c54"
+            "id": "115b399e-9c7d-406e-adf9-172c965a3c54",
+            "alterId": 0
           }
-        ], 
-        "decryption": "none"
+        ]
       }, 
       "streamSettings": {
         "network": "ws", 
         "security": "none", 
         "wsSettings": {
-          "acceptProxyProtocol": false
+          "path": "/php"
         }
       }
     }
@@ -217,9 +216,6 @@ install_config(){
   "outbounds": [
     {
       "protocol": "freedom", 
-      "settings": {
-        "domainStrategy": "UseIPv4"
-      }, 
       "tag": "Proxy"
     },
     {
@@ -263,7 +259,8 @@ install_config(){
 EOF
 }
 install_service(){
-    cat << EOF > /etc/systemd/system/xray.service
+  if [ ! -f /etc/systemd/system/xray.service ];then
+      cat << EOF > /etc/systemd/system/xray.service
 [Unit]
 Description=Xray Service
 Documentation=https://github.com/xtls
@@ -278,11 +275,12 @@ LimitNOFILE=1000000
 [Install]
 WantedBy=multi-user.target
 EOF
-    echo "Enable xray service.."
-    systemctl enable xray.service
+  fi
+  echo "Enable xray service.."
+  systemctl enable xray.service
 
-    echo "Please after install /usr/local/etc/xray/config.json"
-    echo "Please run \"systemctl start xray.service\" to start service"
+  echo "Please after install /usr/local/etc/xray/config.json"
+  echo "Please run \"systemctl start xray.service\" to start service"
 
 }
 
