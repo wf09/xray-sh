@@ -23,6 +23,7 @@ install_bin(){
     unzip -d /tmp/Xray Xray.zip
     chmod +x /tmp/Xray/xray
     mv /tmp/Xray/xray /usr/local/bin/xray
+    mkdir /usr/local/etc/xray
     rm -rf Xray.zip /tmp/Xray
 
     echo "${XRAY_FILE} has been downloaded" 
@@ -52,7 +53,7 @@ EOF
     echo "Enable xray service.."
     systemctl enable xray.service
 
-    echo "After install /usr/local/etc/xray/config.json"
+    echo "Please after install /usr/local/etc/xray/config.json"
     echo "Please run \"systemctl start xray.service\" to start service"
 
 }
