@@ -15,7 +15,11 @@ check_system_and_install_deps(){
     fi
 }
 install_bin(){
-    ARCH="64" # Only support 64bit 
+    if [[ -z "$1" ]]; then
+        ARCH="$1" # Only support 64bit 
+    else
+        ARCH="64"
+    fi
     XRAY_FILE="Xray-linux-${ARCH}.zip"
 	echo "Downloading binary file: ${XRAY_FILE}"
 
