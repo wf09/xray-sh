@@ -15,12 +15,7 @@ check_system_and_install_deps(){
     fi
 }
 install_bin(){
-    if [[ -z "$1" ]]; then
-        ARCH="$1" # Only support 64bit 
-    else
-        ARCH="64"
-    fi
-    XRAY_FILE="Xray-linux-${ARCH}.zip"
+  XRAY_FILE="Xray-linux-${ARCH}.zip"
 	echo "Downloading binary file: ${XRAY_FILE}"
 
 	wget -O ${PWD}/Xray.zip https://cdn.jsdelivr.net/gh/wf09/Xray-release/"${XRAY_FILE}" --progress=bar:force
@@ -287,6 +282,13 @@ EOF
   echo "Please run \"systemctl start xray.service\" to start service"
 
 }
+
+
+if [[ ! -z "$1" ]]; then
+    ARCH="$1" # Only support 64bit 
+else
+    ARCH="64"
+fi
 
 check_root
 check_system_and_install_deps
