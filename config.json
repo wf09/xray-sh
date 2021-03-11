@@ -1,17 +1,7 @@
 {
   "log": {
     "loglevel": "warning"
-  }, 
-  "dns": {
-    "hosts": {
-      "domain:googleapis.cn": "googleapis.com"
-    }, 
-    "servers": [
-      {
-        "address": "https+local://dns.google/dns-query"
-      }
-    ]
-  }, 
+  },
   "routing": {
     "domainStrategy": "IPIfNonMatch", 
     "rules": [
@@ -87,8 +77,43 @@
   }, 
   "inbounds": [
     {
+      "tag": "socks",
+      "port": 1080,
+      "listen": "127.0.0.1",
+      "protocol": "socks",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      },
+      "settings": {
+        "auth": "noauth",
+        "udp": true,
+        "allowTransparent": false
+      }
+    },
+    {
+      "tag": "http",
+      "port": 1081,
+      "listen": "127.0.0.1",
+      "protocol": "http",
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls"
+        ]
+      },
+      "settings": {
+        "udp": false,
+        "allowTransparent": false
+      }
+    },
+    {
       "port": 80,
-      "tag": "ws", 
+      "tag": "80", 
       "protocol": "vless", 
       "settings": {
         "decryption": "none", 
@@ -108,7 +133,7 @@
     }, 
     {
       "port": 443,
-      "tag": "xtls",
+      "tag": "443",
       "protocol": "vless", 
       "settings": {
         "clients": [
@@ -144,6 +169,7 @@
     }, 
     {
       "port": 8080, 
+      "tag": "8080",
       "protocol": "vmess", 
       "settings": {
         "clients": [
@@ -165,37 +191,34 @@
   ], 
   "outbounds": [
     {
-      "protocol": "freedom", 
-      "settings": {
-        "domainStrategy": "UseIPv4"
-      }, 
-      "tag": "Proxy"
+      "protocol": "freedom",  
+      "tag": "Direct"
     },
     {
-      "protocol": "vless", 
+      "tag": "Proxy",
+      "protocol": "vless",
       "settings": {
         "vnext": [
           {
-            "address": "gdfs.ddns.cdntip.top", 
-            "port": 11106, 
+            "address": "99.83.208.99",
+            "port": 80,
             "users": [
               {
-                "encryption": "none", 
-                "flow": "xtls-rprx-direct", 
-                "id": "115b399e-9c7d-406e-adf9-172c965a3c54"
+                "id": "115b399e-9c7d-406e-adf9-172c965a3c54",
+                "encryption":"none"
               }
             ]
           }
         ]
-      }, 
+      },
       "streamSettings": {
-        "network": "tcp", 
-        "security": "xtls", 
-        "xtlsSettings": {
-          "allowInsecure": true
+        "network": "ws",
+        "wsSettings": {
+          "headers": {
+            "Host": "pull.free.video.10010.com"
         }
-      }, 
-      "tag": "BacktoChina"
+        }
+      }
     }, 
     {
       "protocol": "blackhole", 
@@ -205,6 +228,33 @@
         }
       }, 
       "tag": "Reject"
+    },
+    {
+      "tag": "proxy",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "101.32.32.129",
+            "port": 443,
+            "users": [
+              {
+                "id": "bfed5eb8-333a-44d2-811f-59edc3e96199",
+                "encryption": "none",
+                "flow": "xtls-rprx-direct"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "xtls",
+        "xtlsSettings": {
+          "allowInsecure": true,
+          "serverName": "wss.cloud.fly97.cn"
+        }
+      }
     }
   ]
 }
