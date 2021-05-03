@@ -15,6 +15,7 @@ check_system_and_install_deps(){
     fi
 }
 install_bin(){
+  mkdir -p /usr/local/ssl
   XRAY_FILE="Xray-linux-${arch}.zip"
 	echo "Downloading binary file: ${XRAY_FILE}"
   if [ "$mirror" = "github" ]; then
